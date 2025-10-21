@@ -14,7 +14,6 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
 import jakarta.persistence.Temporal;
 import jakarta.persistence.TemporalType;
 import lombok.AllArgsConstructor;
@@ -48,6 +47,6 @@ public class RequestStage implements Serializable{
 	private Request request;
 	
 	@ManyToOne
-	@JoinColumn(name="user_id", nullable = false)
-	private User user;
+	@JoinColumn(name="owner_id", nullable = false)
+	private User owner;
 }
