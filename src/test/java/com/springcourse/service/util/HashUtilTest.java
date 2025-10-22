@@ -15,6 +15,7 @@ public class HashUtilTest {
 	{
 		String password = "123";
 		String hashedPassword = HashUtil.getSecureHash(password);
+		System.out.println(hashedPassword);
 		assertThat(hashedPassword.length()).isEqualTo(64);
 	}
 }
