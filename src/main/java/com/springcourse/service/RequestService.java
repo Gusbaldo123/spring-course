@@ -41,6 +41,12 @@ public class RequestService {
 		return requests;
 	}
 	
+	public List<Request> listAll()
+	{
+		List<Request> requests = requestRepository.findAll();
+		return requests;
+	}
+	
 	public List<Request> listByAllByOwnerId(Long ownerId)
 	{
 		List<Request> requests = requestRepository.findAllByOwnerId(ownerId);

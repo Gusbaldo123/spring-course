@@ -14,13 +14,17 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.springcourse.DTO.UserLoginDTO;
+import com.springcourse.domain.Request;
 import com.springcourse.domain.User;
+import com.springcourse.service.RequestService;
 import com.springcourse.service.UserService;
 
 @RestController
 @RequestMapping(value="users")
 public class UserResource {
 	@Autowired private UserService userService;
+	
+	@Autowired RequestService requestService;
 	
 	@GetMapping("/{id}")
 	public ResponseEntity<User> getById(@PathVariable Long id)
@@ -58,4 +62,10 @@ public class UserResource {
 		return ResponseEntity.ok(loggedUser);
 	}
 	
+	@GetMapping("/{id}/requests")
+	public ResponseEntity<List<Request>> listAllResourcesById(@PathVariable Long id)
+	{
+		List<Request> list = requestService.listByAllByOwnerId(id);
+		return ResponseEntity.ok(list);
+	}
 }
