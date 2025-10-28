@@ -33,7 +33,7 @@ public class RequestResource {
 	}
 	
 	@PutMapping("/{id}")
-	public ResponseEntity<Request> update(@PathVariable Long id, Request request)
+	public ResponseEntity<Request> update(@PathVariable Long id, @RequestBody Request request)
 	{
 		request.setId(id);
 		Request updatedRequest = requestService.update(request);
