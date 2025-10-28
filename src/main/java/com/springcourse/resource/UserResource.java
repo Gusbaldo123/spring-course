@@ -30,7 +30,9 @@ public class UserResource {
 	public ResponseEntity<User> getById(@PathVariable Long id)
 	{
 		User foundUser = userService.getById(id);
+		if(foundUser != null)
 		return ResponseEntity.ok(foundUser);
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 	}
 	
 	@GetMapping
