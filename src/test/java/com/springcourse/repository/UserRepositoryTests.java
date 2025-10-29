@@ -61,4 +61,12 @@ public class UserRepositoryTests {
 		Optional<User> foundTest = userRepository.login("test@test.com", "123");
 	    assertThat(foundTest.map(User::getId).orElse(null)).isEqualTo(1L);
 	}
+	
+	@Test
+	@Order(6)
+	public void updateRoleTest()
+	{
+		int affectedRows = userRepository.updateRole(2l, Role.ADMINISTRATOR);
+		assertThat(affectedRows).isEqualTo(1);
+	}
 }
