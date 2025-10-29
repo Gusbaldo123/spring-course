@@ -37,7 +37,7 @@ public class UserResource {
 	}
 	
 	@GetMapping
-	public ResponseEntity<PageModel<User>> list(@RequestParam int page, @RequestParam int size)
+	public ResponseEntity<PageModel<User>> list(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size)
 	{
 		PageRequestModel pr = new PageRequestModel(page, size);
 		PageModel<User> pm = userService.listAllOnLazyMode(pr);
@@ -67,7 +67,7 @@ public class UserResource {
 	}
 	
 	@GetMapping("/{id}/requests")
-	public ResponseEntity<PageModel<Request>> listAllResourcesById(@PathVariable Long id, @RequestParam int page, @RequestParam int size)
+	public ResponseEntity<PageModel<Request>> listAllResourcesById(@PathVariable Long id, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size)
 	{
 		PageRequestModel pr = new PageRequestModel(page, size);
 		PageModel<Request> pm = requestService.listAllByOwnerIdOnLazyMode(id, pr);
