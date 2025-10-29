@@ -1,7 +1,5 @@
 package com.springcourse.resource;
 
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -11,11 +9,14 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.springcourse.DTO.UserLoginDTO;
 import com.springcourse.domain.Request;
 import com.springcourse.domain.User;
+import com.springcourse.model.PageModel;
+import com.springcourse.model.PageRequestModel;
 import com.springcourse.service.RequestService;
 import com.springcourse.service.UserService;
 
@@ -36,10 +37,11 @@ public class UserResource {
 	}
 	
 	@GetMapping
-	public ResponseEntity<List<User>> list()
+	public ResponseEntity<PageModel<User>> list(@RequestParam int page, @RequestParam int size)
 	{
-		List<User> listUser = userService.listAll();
-		return ResponseEntity.ok(listUser);
+		PageRequestModel pr = new PageRequestModel(page, size);
+		PageModel<User> pm = userService.listAllOnLazyMode(pr);
+		return ResponseEntity.ok(pm);
 	}
 	
 	@PostMapping
@@ -65,9 +67,10 @@ public class UserResource {
 	}
 	
 	@GetMapping("/{id}/requests")
-	public ResponseEntity<List<Request>> listAllResourcesById(@PathVariable Long id)
+	public ResponseEntity<PageModel<Request>> listAllResourcesById(@PathVariable Long id, @RequestParam int page, @RequestParam int size)
 	{
-		List<Request> list = requestService.listByAllByOwnerId(id);
-		return ResponseEntity.ok(list);
+		PageRequestModel pr = new PageRequestModel(page, size);
+		PageModel<Request> pm = requestService.listAllByOwnerIdOnLazyMode(id, pr);
+		return ResponseEntity.ok(pm);
 	}
 }
