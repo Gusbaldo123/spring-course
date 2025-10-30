@@ -33,7 +33,7 @@ public class UserService {
 		return updatedUser;
 	}
 
-	public User getById(Long id) // deal with null pointer later
+	public User getById(Long id)
 	{
 		Optional<User> foundUser = userRepository.findById(id);
 		
@@ -46,11 +46,11 @@ public class UserService {
 		return list;
 	}
 	
-	public User login(String email, String password) // deal with null pointer later
+	public User login(String email, String password)
 	{
 		String hashPassword = HashUtil.getSecureHash(password);
 		Optional<User> foundUser = userRepository.login(email, hashPassword);
-		return foundUser.get();
+		return foundUser.orElseThrow(() -> new NotFoundException("Invalid username or password"));
 	}
 	
 	public PageModel<User> listAllOnLazyMode(PageRequestModel pr)

@@ -14,6 +14,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.springcourse.DTO.UserLoginDTO;
+import com.springcourse.DTO.UserSaveDTO;
+import com.springcourse.DTO.UserUpdateDTO;
 import com.springcourse.DTO.UserUpdateRoleDTO;
 import com.springcourse.domain.Request;
 import com.springcourse.domain.User;
@@ -22,22 +24,24 @@ import com.springcourse.model.PageRequestModel;
 import com.springcourse.service.RequestService;
 import com.springcourse.service.UserService;
 
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping(value="users")
 public class UserResource {
 	@Autowired private UserService userService;
-	
+
 	@Autowired RequestService requestService;
-	
+
 	@GetMapping("/{id}")
 	public ResponseEntity<User> getById(@PathVariable Long id)
 	{
 		User foundUser = userService.getById(id);
 		if(foundUser != null)
-		return ResponseEntity.ok(foundUser);
+			return ResponseEntity.ok(foundUser);
 		return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
 	}
-	
+
 	@GetMapping
 	public ResponseEntity<PageModel<User>> list(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size)
 	{
@@ -45,39 +49,42 @@ public class UserResource {
 		PageModel<User> pm = userService.listAllOnLazyMode(pr);
 		return ResponseEntity.ok(pm);
 	}
-	
+
 	@PostMapping
-	public ResponseEntity<User> save(@RequestBody User user)
+	public ResponseEntity<User> save(@RequestBody @Valid UserSaveDTO userSaveDTO)
 	{
-		User createdUser = userService.save(user);
+		User createdUser = userService.save(userSaveDTO.transformToUser());
 		return ResponseEntity.status(HttpStatus.CREATED).body(createdUser);
 	}
-	
+
 	@PutMapping("/{id}")
-	public ResponseEntity<User> update(@PathVariable Long id, @RequestBody User user)
+	public ResponseEntity<User> update(@PathVariable Long id, @RequestBody @Valid UserUpdateDTO userUpdateDTO)
 	{
-		user.setId(id);
-		User updatedUser = userService.update(user);
+		User dtoUser = userUpdateDTO.transformToUser();
+		dtoUser.setId(id);
+		User updatedUser = userService.update(dtoUser);
 		return ResponseEntity.ok(updatedUser);
 	}
-	
+
 	@PostMapping("/login")
-	public ResponseEntity<User> login(@RequestBody UserLoginDTO dto)
+	public ResponseEntity<User> login(@RequestBody @Valid UserLoginDTO dto)
 	{
 		User loggedUser = userService.login(dto.getEmail(), dto.getPassword());
 		return ResponseEntity.ok(loggedUser);
 	}
-	
+
 	@GetMapping("/{id}/requests")
-	public ResponseEntity<PageModel<Request>> listAllResourcesById(@PathVariable Long id, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size)
+	public ResponseEntity<PageModel<Request>> listAllResourcesById(@PathVariable Long id,
+			@RequestParam(defaultValue = "0") int page,
+			@RequestParam(defaultValue = "10") int size)
 	{
 		PageRequestModel pr = new PageRequestModel(page, size);
 		PageModel<Request> pm = requestService.listAllByOwnerIdOnLazyMode(id, pr);
 		return ResponseEntity.ok(pm);
 	}
-	
+
 	@PatchMapping("/role/{id}")
-	public ResponseEntity<?> updateRole(@RequestBody UserUpdateRoleDTO dto, @PathVariable Long id)
+	public ResponseEntity<?> updateRole(@RequestBody @Valid UserUpdateRoleDTO dto, @PathVariable Long id)
 	{
 		User user = new User();
 		user.setId(id);
