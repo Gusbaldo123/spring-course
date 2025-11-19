@@ -17,12 +17,16 @@ import lombok.Setter;
 @NoArgsConstructor
 public class RequestStageSaveDTO {
 	private String description;
+	
 	@NotNull(message="state required")
 	private RequestState state;
+	
 	@NotNull(message="request required")
 	private Request request;
+	
 	@NotNull(message="owner required")
 	private User owner;
+	
 	public RequestStage transformToRequestStage()
 	{
 		return new RequestStage(null,this.description,null,this.state,this.request,this.owner);
