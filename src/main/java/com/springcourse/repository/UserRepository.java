@@ -20,4 +20,6 @@ public interface UserRepository extends JpaRepository<User, Long>{
 	@Transactional(readOnly = false)
 	@Query("update user u set u.role = ?2 where u.id = ?1")
 	public int updateRole(Long id, Role role);
+	
+	public Optional<User> findByEmail(String email);
 }
