@@ -1,5 +1,8 @@
 package com.springcourse.resource;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +28,7 @@ import com.springcourse.domain.Request;
 import com.springcourse.domain.User;
 import com.springcourse.model.PageModel;
 import com.springcourse.model.PageRequestModel;
+import com.springcourse.security.JwtManager;
 import com.springcourse.service.RequestService;
 import com.springcourse.service.UserService;
 
@@ -38,6 +42,8 @@ public class UserResource {
 	@Autowired private RequestService requestService;
 	
 	@Autowired private AuthenticationManager authManager;
+	
+	@Autowired private JwtManager jwtManager;
 
 	@GetMapping("/{id}")
 	public ResponseEntity<User> getById(@PathVariable Long id)
@@ -73,14 +79,20 @@ public class UserResource {
 	}
 
 	@PostMapping("/login")
-	public ResponseEntity<User> login(@RequestBody @Valid UserLoginDTO dto)
+	public ResponseEntity<String> login(@RequestBody @Valid UserLoginDTO dto)
 	{
 		UsernamePasswordAuthenticationToken token = new UsernamePasswordAuthenticationToken(dto.getEmail(), dto.getPassword());
 		Authentication auth = authManager.authenticate(token);
 		
 		SecurityContextHolder.getContext().setAuthentication(auth);
 		
-		return ResponseEntity.ok(null); // temp
+		org.springframework.security.core.userdetails.User userSpring = (org.springframework.security.core.userdetails.User)auth.getPrincipal();
+		String email = userSpring.getUsername();
+		List<String> roles = userSpring.getAuthorities().stream().map(a->a.getAuthority()).collect(Collectors.toList());
+		
+		String jwt = jwtManager.createToken(email, roles); 
+		
+		return ResponseEntity.ok(jwt);
 	}
 
 	@GetMapping("/{id}/requests")
